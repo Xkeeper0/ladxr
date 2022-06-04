@@ -15,8 +15,12 @@ class ROM:
     def patch(self, bank_nr, addr, old, new, *, fill_nop=False):
         new = h2b(new)
         bank = self.banks[bank_nr]
+        if bank_nr > 0 and (0x4000 <= addr <= 0x8000):
+            addr -= 0x4000
         if old is not None:
             if isinstance(old, int):
+                if bank_nr > 0 and (0x4000 <= (old - 1) <= 0x8000):
+                    old -= 0x4000
                 old = bank[addr:old]
             else:
                 old = h2b(old)
