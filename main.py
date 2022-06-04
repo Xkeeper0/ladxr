@@ -151,7 +151,7 @@ def main(mainargs=None):
         help="Remove the flashing light effects from mamu, the shopkeeper and madbatter.")
     parser.add_argument('--quickswap', dest="quickswap", choices=['none', 'a', 'b'], default='none',
         help="Configure quickswap for A or B button (select key swaps, no longer opens map)")
-    parser.add_argument('--textmode', dest="textmode", choices=['default', 'fast', 'none'], default='default',
+    parser.add_argument('--textmode', dest="textmode", choices=['default', 'fast', 'turbo', 'none'], default='default',
         help="Default just keeps text normal, fast makes text appear twice as fast, and none removes all text from the game.")
     parser.add_argument('--nag-messages', dest="removeNagMessages", action="store_false",
         help="Enable the nag messages on touching stones and crystals. By default they are removed.")

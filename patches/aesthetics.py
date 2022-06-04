@@ -146,6 +146,33 @@ def noText(rom):
         if not isinstance(rom.texts[idx], int) and (idx < 0x217 or idx > 0x21A):
             rom.texts[idx] = rom.texts[idx][-1:]
 
+def turboText(rom):
+    # Remove the calls to message popups for the more useless things
+    # as a balance between no text at all and normal fast text
+
+    # remove message popups on guardian acorns, pieces of power
+    rom.patch(0x00, 0x105C, ASM("call $2385"), "", fill_nop=True)
+    # Level # - Who Cares
+    rom.patch(0x01, 0x21FF, ASM("call $2385"), "", fill_nop=True)
+
+    # Remove instructions from fishing game
+    # ...when starting
+    rom.patch(0x04, 0x2032, ASM("""
+        ld a, $47
+        jp $2385
+    """), ASM("ret"), fill_nop=True)
+    # ...when continuing  (todo: check if question being disabled is normal)
+    rom.patch(0x04, 0x622D, ASM("""
+        ld a, $47
+        call $2385
+    """), "", fill_nop=True)
+
+    # Great Fairy healing fountains
+    rom.patch(0x06, 0x3180, None, ASM("ret"))
+
+    # Mad Batter
+    rom.patch(0x18, 0x0F8A, ASM("call $5080"), "", fill_nop = True)
+
 
 def reduceMessageLengths(rom, rnd):
     # Into text from Marin. Got to go fast, so less text. (This intro text is very long)
@@ -177,55 +204,58 @@ def reduceMessageLengths(rom, rnd):
     rom.texts[0x07] = formatText("You need the {NIGHTMARE_KEY}!")
     rom.texts[0x8C] = formatText("You need a {KEY}!")  # keyhole block
 
-    rom.texts[0x09] = formatText("Ahhh... It has  the Sleepy {TOADSTOOL}, it does! We'll mix it up something in a jiffy, we will!")
-    rom.texts[0x0A] = formatText("The last thing I kin remember was bitin' into a big juicy {TOADSTOOL}... Then, I had the darndest dream... I was a raccoon! Yeah, sounds strange, but it sure was fun!")
-    rom.texts[0x0F] = formatText("You pick the {TOADSTOOL}... As you hold it over your head, a mellow aroma flows into your nostrils.")
-    rom.texts[0x13] = formatText("You've learned the ^{SONG1}!^ This song will always remain in your heart!")
-    rom.texts[0x18] = formatText("Will you give me 28 {RUPEES} for my secret?", ask="Give Don't")
-    rom.texts[0x19] = formatText("How about it? 42 {RUPEES} for my little secret...", ask="Give Don't")
+    rom.texts[0x09] = formatText("What will your {TOADSTOOL} become?")
+    rom.texts[0x0A] = formatText("burp {TOADSTOOL} fart raccoon!\nbye")
+    rom.texts[0x0F] = formatText("You pick the {TOADSTOOL}!")
+    rom.texts[0x13] = formatText("You've learned the ^{SONG1}!^")
+    rom.texts[0x18] = formatText("Medicine, 28 {RUPEES}?", ask="Give Don't")
+    rom.texts[0x19] = formatText("Medicine, 42 {RUPEES}?", ask="Give Don't")
     rom.texts[0x1e] = formatText("...You're so cute! I'll give you a 7 {RUPEE} discount!")
     rom.texts[0x2d] = formatText("{ARROWS_10}\n10 {RUPEES}!", ask="Buy  Don't")
     rom.texts[0x32] = formatText("{SHIELD}\n20 {RUPEES}!", ask="Buy  Don't")
     rom.texts[0x33] = formatText("Ten {BOMB}\n10 {RUPEES}", ask="Buy  Don't")
-    rom.texts[0x3d] = formatText("It's a {SHIELD}! There is space for your name!")
-    rom.texts[0x42] = formatText("It's 30 {RUPEES}! You can play the game three more times with this!")
-    rom.texts[0x45] = formatText("How about some fishing, little buddy? I'll only charge you 10 {RUPEES}...", ask="Fish Not Now")
-    rom.texts[0x4b] = formatText("Wow! Nice Fish! It's a lunker!! I'll give you a 20 {RUPEE} prize! Try again?", ask="Cast Not Now")
-    rom.texts[0x4e] = formatText("You're short of {RUPEES}? Don't worry about it. You just come back when you have more money, little buddy.")
-    rom.texts[0x4f] = formatText("You've got a {HEART_PIECE}! Press SELECT on the Subscreen to see.")
-    rom.texts[0x8e] = formatText("Well, it's an {OCARINA}, but you don't know how  to play it...")
-    rom.texts[0x90] = formatText("You found the {POWER_BRACELET}! At last, you can pick up pots and stones!")
-    rom.texts[0x91] = formatText("You got your {SHIELD} back! Press the button and repel enemies with it!")
-    rom.texts[0x93] = formatText("You've got the {HOOKSHOT}! Its chain stretches long when you use it!")
-    rom.texts[0x94] = formatText("You've got the {MAGIC_ROD}! Now you can burn things! Burn it! Burn, baby burn!")
-    rom.texts[0x95] = formatText("You've got the {PEGASUS_BOOTS}! If you hold down the Button, you can dash!")
-    rom.texts[0x96] = formatText("You've got the {OCARINA}! You should learn to play many songs!")
-    rom.texts[0x97] = formatText("You've got the {FEATHER}! It feels like your body is a  lot lighter!")
-    rom.texts[0x98] = formatText("You've got a {SHOVEL}! Now you can feel the joy of digging!")
-    rom.texts[0x99] = formatText("You've got some {MAGIC_POWDER}! Try sprinkling it on a variety of things!")
-    rom.texts[0x9b] = formatText("You found your {SWORD}!  It must be yours because it has your name engraved on it!")
-    rom.texts[0x9c] = formatText("You've got the {FLIPPERS}! If you press the B Button while you swim, you can dive underwater!")
-    rom.texts[0x9e] = formatText("You've got a new {SWORD}! You should put your name on it right away!")
-    rom.texts[0x9f] = formatText("You've got a new {SWORD}! You should put your name on it right away!")
-    rom.texts[0xa0] = formatText("You found the {MEDICINE}! You should apply this and see what happens!")
-    rom.texts[0xa1] = formatText("You've got the {TAIL_KEY}! Now you can open the Tail Cave gate!")
-    rom.texts[0xa2] = formatText("You've got the {SLIME_KEY}! Now you can open the gate in Ukuku Prairie!")
+    rom.texts[0x38] = formatText("The castle gate has been opened!")
+    rom.texts[0x3d] = formatText("It's a {SHIELD}!")
+    rom.texts[0x42] = formatText("It's 30 {RUPEES}!")
+    rom.texts[0x45] = formatText("Fishing pond,   10 {RUPEES}!", ask="Fish Nah")
+    rom.texts[0x4b] = formatText("It's a lunker!! 20 {RUPEES}!\nTry again?", ask="Cast Nah")
+    #                            |0123456789abcde|0123456789abcde|0123456789abcde|0123456789abcde|
+    rom.texts[0x4d] = formatText("It's a runt!    Only 5 {RUPEES}!")
+    rom.texts[0x4e] = formatText("You need more {RUPEES}!")
+    rom.texts[0x4f] = formatText("You've got a {HEART_PIECE}!")
+    rom.texts[0x8e] = formatText("You don't know  any songs...")
+    rom.texts[0x90] = formatText("You found the {POWER_BRACELET}!")
+    rom.texts[0x91] = formatText("You found your {SHIELD}!")
+    rom.texts[0x93] = formatText("You've got the {HOOKSHOT}!")
+    rom.texts[0x94] = formatText("You've got the {MAGIC_ROD}!")
+    rom.texts[0x95] = formatText("You've got the {PEGASUS_BOOTS}!")
+    rom.texts[0x96] = formatText("You've got the {OCARINA}!")
+    rom.texts[0x97] = formatText("You've got the {FEATHER}!")
+    rom.texts[0x98] = formatText("You've got a {SHOVEL}!")
+    rom.texts[0x99] = formatText("You've got some {MAGIC_POWDER}!")
+    rom.texts[0x9b] = formatText("You found your {SWORD}!")
+    rom.texts[0x9c] = formatText("You've got the {FLIPPERS}!")
+    rom.texts[0x9e] = formatText("You found a better {SWORD}!")
+    rom.texts[0x9f] = formatText("You found a better {SWORD}!")
+    rom.texts[0xa0] = formatText("You found some {MEDICINE}!")
+    rom.texts[0xa1] = formatText("You've got the {TAIL_KEY}!")
+    rom.texts[0xa2] = formatText("You've got the {SLIME_KEY}!")
     rom.texts[0xa3] = formatText("You've got the {ANGLER_KEY}!")
     rom.texts[0xa4] = formatText("You've got the {FACE_KEY}!")
     rom.texts[0xa5] = formatText("You've got the {BIRD_KEY}!")
-    rom.texts[0xa6] = formatText("At last, you got a {MAP}! Press the START Button to look at it!")
-    rom.texts[0xa8] = formatText("You found a {STONE_BEAK}! Let's find the owl statue that belongs to it.")
-    rom.texts[0xa9] = formatText("You've got the {NIGHTMARE_KEY}! Now you can open the door to the Nightmare's Lair!")
-    rom.texts[0xaa] = formatText("You got a {KEY}! You can open a locked door.")
+    rom.texts[0xa6] = formatText("You found the {MAP}!")
+    rom.texts[0xa8] = formatText("You found the {STONE_BEAK}!")
+    rom.texts[0xa9] = formatText("You've got the {NIGHTMARE_KEY}!")
+    rom.texts[0xaa] = formatText("You got a {KEY}!")
     rom.texts[0xab] = formatText("You got 20 {RUPEES}! JOY!", center=True)
     rom.texts[0xac] = formatText("You got 50 {RUPEES}! Very Nice!", center=True)
     rom.texts[0xad] = formatText("You got 100 {RUPEES}! You're Happy!", center=True)
     rom.texts[0xae] = formatText("You got 200 {RUPEES}! You're Ecstatic!", center=True)
-    rom.texts[0xdc] = formatText("Ribbit! Ribbit! I'm Mamu, on vocals! But I don't need to tell you that, do I? Everybody knows me! Want to hang out and listen to us jam? For 300 Rupees, we'll let you listen to a previously unreleased cut! What do you do?", ask="Pay Leave")
-    rom.texts[0xe8] = formatText("You've found a {GOLD_LEAF}! Press START to see how many you've collected!")
-    rom.texts[0xed] = formatText("You've got the Mirror Shield! You can now turnback the beams you couldn't block before!")
-    rom.texts[0xee] = formatText("You've got a more Powerful {POWER_BRACELET}! Now you can almost lift a whale!")
-    rom.texts[0xf0] = formatText("Want to go on a raft ride for a hundred {RUPEES}?", ask="Yes No Way")
+    rom.texts[0xdc] = formatText("Listen to Mamu?", ask="Pay  Leave")
+    rom.texts[0xe8] = formatText("You've found a {GOLD_LEAF}!")
+    rom.texts[0xed] = formatText("You've got the Mirror Shield!")
+    rom.texts[0xee] = formatText("You've got a stronger {POWER_BRACELET}!")
+    rom.texts[0xf0] = formatText("Ride the raft   for 100 {RUPEES}?", ask="Yes  No Way")
 
 
 def allowColorDungeonSpritesEverywhere(rom):

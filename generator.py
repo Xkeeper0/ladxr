@@ -176,6 +176,9 @@ def generateRom(options, seed, logic, *, rnd=None, multiworld=None):
         patches.weapons.patchSuperWeapons(rom)
     if options.textmode == 'fast':
         patches.aesthetics.fastText(rom)
+    if options.textmode == 'turbo':
+        patches.aesthetics.fastText(rom)
+        patches.aesthetics.turboText(rom)
     if options.textmode == 'none':
         patches.aesthetics.fastText(rom)
         patches.aesthetics.noText(rom)
