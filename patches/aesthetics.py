@@ -170,8 +170,38 @@ def turboText(rom):
     # Great Fairy healing fountains
     rom.patch(0x06, 0x3180, None, ASM("ret"))
 
-    # Mad Batter
+    # Mad Batter "You woke me up..."
     rom.patch(0x18, 0x0F8A, ASM("call $5080"), "", fill_nop = True)
+
+    # Seashell Mansion "My job here is finished"
+    rom.patch(0x19, 0x731D, 0x7320, "", fill_nop = True)
+
+    # Moblin King
+    rom.patch(0x07, 0x79F2, 0x79F2 + 5, "", fill_nop = True)    # 190 Sussy runt
+    rom.patch(0x15, 0x4754, 0x4754 + 5, "", fill_nop = True)    # 191 You must be an assassin
+
+
+    # Bosses
+
+    # D2 - Bottle Grotto boss
+    # yet to be removed: intro "I'm your bad guy this time"
+    rom.patch(0x04, 0x4188, 0x418D, "", fill_nop = True)
+    rom.patch(0x04, 0x436D, 0x4370, ASM("ret"), fill_nop = True)
+
+    # D5 - Master Stalfos initial messages
+    rom.patch(0x07, 0x6B30, 0x6B30 + 3, "", fill_nop = True)
+    
+    # D0 - Golem
+    rom.patch(0x36, 0x5CF4, 0x4D32 + 5, "", fill_nop = True)    # 26A Give up and go home
+
+    # D0 - Buzz Blob
+    rom.patch(0x36, 0x556C, 0x556C + 5, "", fill_nop = True)    # 261 Your sword is no match
+    rom.patch(0x36, 0x565C, 0x565C + 5, "", fill_nop = True)    # 269 You fool! Your sword won't work
+
+    # D0 - Crystal Switch boss
+    rom.patch(0x36, 0x4E4B, 0x4E4B + 5, "", fill_nop = True)    # 26E Yellow is caution...
+    rom.patch(0x36, 0x4DC6, 0x4DC6 + 5, "", fill_nop = True)    # 26D Blue is safe...
+    rom.patch(0x36, 0x4D32, 0x4D32 + 5, "", fill_nop = True)    # 26F Blue, start over
 
 
 def reduceMessageLengths(rom, rnd):
@@ -199,6 +229,7 @@ def reduceMessageLengths(rom, rnd):
     rom.texts[0xEC] = rom.texts[0xEA]
     rom.texts[0x08] = formatText("You got a Piece of Power!")
     rom.texts[0xEF] = formatText("You found a {SEASHELL}!")
+    #                           |0123456789abcde|0123456789abcde|0123456789abcde|0123456789abcde|
     rom.texts[0xA7] = formatText("You've got the {COMPASS}!")
 
     rom.texts[0x07] = formatText("You need the {NIGHTMARE_KEY}!")
@@ -208,20 +239,19 @@ def reduceMessageLengths(rom, rnd):
     rom.texts[0x0A] = formatText("burp {TOADSTOOL} fart raccoon!\nbye")
     rom.texts[0x0F] = formatText("You pick the {TOADSTOOL}!")
     rom.texts[0x13] = formatText("You've learned the ^{SONG1}!^")
-    rom.texts[0x18] = formatText("Medicine, 28 {RUPEES}?", ask="Give Don't")
-    rom.texts[0x19] = formatText("Medicine, 42 {RUPEES}?", ask="Give Don't")
+    rom.texts[0x18] = formatText("Medicine, 28 Rupees?", ask="Give Don't")
+    rom.texts[0x19] = formatText("Medicine, 42 Rupees?", ask="Give Don't")
     rom.texts[0x1e] = formatText("...You're so cute! I'll give you a 7 {RUPEE} discount!")
-    rom.texts[0x2d] = formatText("{ARROWS_10}\n10 {RUPEES}!", ask="Buy  Don't")
-    rom.texts[0x32] = formatText("{SHIELD}\n20 {RUPEES}!", ask="Buy  Don't")
-    rom.texts[0x33] = formatText("Ten {BOMB}\n10 {RUPEES}", ask="Buy  Don't")
+    rom.texts[0x2d] = formatText("{ARROWS_10}\n10 Rupees!", ask="Buy  Don't")
+    rom.texts[0x32] = formatText("{SHIELD}\n20 Rupees!", ask="Buy  Don't")
+    rom.texts[0x33] = formatText("Ten {BOMB}\n10 Rupees", ask="Buy  Don't")
     rom.texts[0x38] = formatText("The castle gate has been opened!")
     rom.texts[0x3d] = formatText("It's a {SHIELD}!")
-    rom.texts[0x42] = formatText("It's 30 {RUPEES}!")
-    rom.texts[0x45] = formatText("Fishing pond,   10 {RUPEES}!", ask="Fish Nah")
-    rom.texts[0x4b] = formatText("It's a lunker!! 20 {RUPEES}!\nTry again?", ask="Cast Nah")
-    #                            |0123456789abcde|0123456789abcde|0123456789abcde|0123456789abcde|
-    rom.texts[0x4d] = formatText("It's a runt!    Only 5 {RUPEES}!")
-    rom.texts[0x4e] = formatText("You need more {RUPEES}!")
+    rom.texts[0x42] = formatText("It's 30 Rupees!")
+    rom.texts[0x45] = formatText("Fishing pond,   10 Rupees!", ask="Fish Nah")
+    rom.texts[0x4b] = formatText("It's a lunker!! 20 Rupees!\nTry again?", ask="Cast Nah")
+    rom.texts[0x4d] = formatText("It's a runt!    Only 5 Rupees!")
+    rom.texts[0x4e] = formatText("You need more Rupees!")
     rom.texts[0x4f] = formatText("You've got a {HEART_PIECE}!")
     rom.texts[0x8e] = formatText("You don't know  any songs...")
     rom.texts[0x90] = formatText("You found the {POWER_BRACELET}!")
@@ -247,15 +277,19 @@ def reduceMessageLengths(rom, rnd):
     rom.texts[0xa8] = formatText("You found the {STONE_BEAK}!")
     rom.texts[0xa9] = formatText("You've got the {NIGHTMARE_KEY}!")
     rom.texts[0xaa] = formatText("You got a {KEY}!")
-    rom.texts[0xab] = formatText("You got 20 {RUPEES}! JOY!", center=True)
-    rom.texts[0xac] = formatText("You got 50 {RUPEES}! Very Nice!", center=True)
-    rom.texts[0xad] = formatText("You got 100 {RUPEES}! You're Happy!", center=True)
-    rom.texts[0xae] = formatText("You got 200 {RUPEES}! You're Ecstatic!", center=True)
+    rom.texts[0xab] = formatText("You got 20 Rupees! JOY!", center=True)
+    rom.texts[0xac] = formatText("You got 50 Rupees! Very Nice!", center=True)
+    rom.texts[0xad] = formatText("You got 100 Rupees! You're Happy!", center=True)
+    rom.texts[0xae] = formatText("You got 200 Rupees! You're Ecstatic!", center=True)
     rom.texts[0xdc] = formatText("Listen to Mamu?", ask="Pay  Leave")
     rom.texts[0xe8] = formatText("You've found a {GOLD_LEAF}!")
     rom.texts[0xed] = formatText("You've got the Mirror Shield!")
     rom.texts[0xee] = formatText("You've got a stronger {POWER_BRACELET}!")
-    rom.texts[0xf0] = formatText("Ride the raft   for 100 {RUPEES}?", ask="Yes  No Way")
+    rom.texts[0xf0] = formatText("Ride the raft   for 100 Rupees?", ask="Yes  No Way")
+
+    rom.texts[0x13a] = formatText("I want my five  Golden Leaves!", ask="Okay Ugh")
+    rom.texts[0x13b] = formatText("I hope it was   worth it!")
+    rom.texts[0x13d] = formatText("And behind this box is...?!")
 
 
 def allowColorDungeonSpritesEverywhere(rom):
