@@ -152,7 +152,7 @@ def formatText(s, *, center=False, ask=None):
     if ask is not None:
         ask = ask.encode("ascii")
         result = result.rstrip()
-        while len(result) % 32 != 16:
+        while len(result) % 16 != 0:
             result += b' '
         return result + b'    ' + ask + b'\xfe'
     return result.rstrip() + b'\xff'
