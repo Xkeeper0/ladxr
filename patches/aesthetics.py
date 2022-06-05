@@ -245,7 +245,7 @@ def reduceMessageLengths(rom, rnd):
     rom.texts[0x2d] = formatText("{ARROWS_10}\n10 Rupees!", ask="Buy  Don't")
     rom.texts[0x32] = formatText("{SHIELD}\n20 Rupees!", ask="Buy  Don't")
     rom.texts[0x33] = formatText("Ten {BOMB}\n10 Rupees", ask="Buy  Don't")
-    rom.texts[0x38] = formatText("The castle gate has been opened!")
+    rom.texts[0x39] = formatText("The castle gate has been opened!")
     rom.texts[0x3d] = formatText("It's a {SHIELD}!")
     rom.texts[0x42] = formatText("It's 30 Rupees!")
     rom.texts[0x45] = formatText("Fishing pond,   10 Rupees!", ask="Fish Nah")
